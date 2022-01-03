@@ -60,12 +60,14 @@ class FCN(nn.Module):
         x = self.layer5(x)
 
         # Dense
-        x = x.view(x.size(0), -1)
-        x = self.dropout(x)
+        emb = x.view(x.size(0), -1)
+        x = self.dropout(emb)
         x = self.dense(x)
         x = nn.Sigmoid()(x)
 
-        return x
+        return x, emb
+
+
 
 
 class Musicnn(nn.Module):
@@ -140,14 +142,15 @@ class Musicnn(nn.Module):
         avgp = nn.AvgPool1d(length)(out)
 
         out = torch.cat([mp, avgp], dim=1)
-        out = out.squeeze(2)
+        emb = out.squeeze(2)
 
-        out = self.relu(self.bn(self.dense1(out)))
+        out = self.relu(self.bn(self.dense1(emb)))
         out = self.dropout(out)
         out = self.dense2(out)
         out = nn.Sigmoid()(out)
 
-        return out
+        return out, emb
+
 
 
 class CRNN(nn.Module):
@@ -204,14 +207,16 @@ class CRNN(nn.Module):
         x = x.squeeze(2)
         x = x.permute(0, 2, 1)
         x, _ = self.layer5(x)
-        x = x[:, -1, :]
+        emb = x[:, -1, :]
 
         # Dense
-        x = self.dropout(x)
+        x = self.dropout(emb)
         x = self.dense(x)
         x = nn.Sigmoid()(x)
 
-        return x
+        return x, emb
+
+
 
 
 class SampleCNN(nn.Module):
@@ -250,11 +255,13 @@ class SampleCNN(nn.Module):
         x = self.layer9(x)
         x = self.layer10(x)
         x = self.layer11(x)
-        x = x.squeeze(-1)
-        x = self.dropout(x)
+        emb = x.squeeze(-1)
+        x = self.dropout(emb)
         x = self.dense(x)
         x = nn.Sigmoid()(x)
-        return x
+        return x, emb
+
+
 
 
 class SampleCNNSE(nn.Module):
@@ -295,12 +302,15 @@ class SampleCNNSE(nn.Module):
         x = self.layer9(x)
         x = self.layer10(x)
         x = self.layer11(x)
-        x = x.squeeze(-1)
-        x = nn.ReLU()(self.bn(self.dense1(x)))
+        emb = x.squeeze(-1)
+        x = nn.ReLU()(self.bn(self.dense1(emb)))
         x = self.dropout(x)
         x = self.dense2(x)
         x = nn.Sigmoid()(x)
-        return x
+        return x, emb
+
+
+
 
 
 class ShortChunkCNN(nn.Module):
@@ -364,17 +374,20 @@ class ShortChunkCNN(nn.Module):
         # Global Max Pooling
         if x.size(-1) != 1:
             x = nn.MaxPool1d(x.size(-1))(x)
-        x = x.squeeze(2)
+        emb = x.squeeze(2)
 
         # Dense
-        x = self.dense1(x)
+        x = self.dense1(emb)
         x = self.bn(x)
         x = self.relu(x)
         x = self.dropout(x)
         x = self.dense2(x)
         x = nn.Sigmoid()(x)
 
-        return x
+        return x, emb
+
+
+
 
 
 class ShortChunkCNN_Res(nn.Module):
@@ -436,17 +449,19 @@ class ShortChunkCNN_Res(nn.Module):
         # Global Max Pooling
         if x.size(-1) != 1:
             x = nn.MaxPool1d(x.size(-1))(x)
-        x = x.squeeze(2)
+        emb = x.squeeze(2)
 
         # Dense
-        x = self.dense1(x)
+        x = self.dense1(emb)
         x = self.bn(x)
         x = self.relu(x)
         x = self.dropout(x)
         x = self.dense2(x)
         x = nn.Sigmoid()(x)
 
-        return x
+        return x, emb
+
+
 
 
 class CNNSA(nn.Module):
@@ -538,14 +553,16 @@ class CNNSA(nn.Module):
         # Transformer encoder
         x = self.encoder(x)
         x = x[-1]
-        x = self.pooler(x)
+        emb = self.pooler(x)
 
         # Dense
-        x = self.dropout(x)
+        x = self.dropout(emb)
         x = self.dense(x)
         x = nn.Sigmoid()(x)
 
-        return x
+        return x, emb
+
+
 
 
 class HarmonicCNN(nn.Module):
@@ -608,15 +625,15 @@ class HarmonicCNN(nn.Module):
         # Global Max Pooling
         if x.size(-1) != 1:
             x = nn.MaxPool1d(x.size(-1))(x)
-        x = x.squeeze(2)
+        emb = x.squeeze(2)
 
         # Dense
-        x = self.dense1(x)
+        x = self.dense1(emb)
         x = self.bn(x)
         x = self.relu(x)
         x = self.dropout(x)
         x = self.dense2(x)
         x = nn.Sigmoid()(x)
 
-        return x
+        return x, emb
 
