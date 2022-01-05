@@ -155,16 +155,17 @@ class Predict(object):
 
 
         for line in tqdm.tqdm(partition):
-            try:
-                if self.dataset == 'mtat':
-                    ix, fn = line.split('\t')
-                elif self.dataset == 'msd':
-                    fn = line
-                    if fn.decode() in skip_files:
-                        continue
-                elif self.dataset == 'jamendo':
-                    fn = line
+            
+            if self.dataset == 'mtat':
+                ix, fn = line.split('\t')
+            elif self.dataset == 'msd':
+                fn = line
+                if fn.decode() in skip_files:
+                    continue
+            elif self.dataset == 'jamendo':
+                fn = line
 
+            try:
                 # load and split
                 x = self.get_tensor(fn)
 
@@ -179,7 +180,7 @@ class Predict(object):
                 # forward
                 x = self.to_var(x)
                 _, emb_raw = self.model(x)
-                emb = emb_raw.detach().numpy().mean(axis=0)
+                emb = emb_raw.detach().cpu().numpy().mean(axis=0)
                 self.save_embedding(emb, ground_truth, self.dataset, config.model_type, config.partition)
             except:
                 pass
