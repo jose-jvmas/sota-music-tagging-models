@@ -83,7 +83,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_type', type=str, default='fcn',
                         choices=['fcn', 'musicnn', 'crnn', 'sample', 'se', 'short', 'short_res', 'attention', 'hcnn'])
     parser.add_argument('--shallow_model', type=str, default='forest',
-                        choices=['forest', 'knn', 'SVM'])
+                        choices=['forest', 'knn', 'SVM', 'xgboost'])
     parser.add_argument('--ml', type=str, default='powerset',
                         choices=['powerset', 'binary'])
 
