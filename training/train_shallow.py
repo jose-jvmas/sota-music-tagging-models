@@ -19,7 +19,7 @@ def train(config):
     corpus = SingleCorpus(config)
     
     # Destination path:
-    dst_pth = os.path.join('shallow_cls', config.dataset, config.model_type)
+    dst_pth = os.path.join('/home/user/data/Dataset/AudioClassification/Minz/shallow_cls', config.dataset, config.model_type)
     if not os.path.exists(dst_pth): os.makedirs(dst_pth)
 
     # Training models:

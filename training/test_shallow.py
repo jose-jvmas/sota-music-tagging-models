@@ -36,7 +36,7 @@ def test_model(config):
 
 	# Retrieving results file:
     results_file = retrieve_results_file( 'Results.csv')
-    dst_path = os.path.join('shallow_cls', config.dataset, config.model_type)
+    dst_path = os.path.join('/home/user/data/Dataset/AudioClassification/Minz/shallow_cls', config.dataset, config.model_type)
 
     assert os.path.isfile(os.path.join(dst_path, config.shallow_model + '_{}.cls'.format(config.ml))), "No trained {}_{}.cls model for {} arch".format(config.shallow_model, config.ml, config.model_type)
     cls = load(os.path.join(dst_path, config.shallow_model + '_{}.cls'.format(config.ml)))

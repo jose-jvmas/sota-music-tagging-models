@@ -82,8 +82,8 @@ class Solver(object):
 
     def get_dataset(self):
         if self.dataset == 'mtat':
-            self.valid_list = np.load('./../split/mtat/valid.npy')
-            self.binary = np.load('./../split/mtat/binary.npy')
+            self.valid_list = np.load('./split/mtat/valid.npy')
+            self.binary = np.load('./split/mtat/binary.npy')
         if self.dataset == 'msd':
             train_file = os.path.join('./../split/msd','filtered_list_train.cP')
             train_list = pickle.load(open(train_file,'rb'), encoding='bytes')
@@ -166,7 +166,7 @@ class Solver(object):
                 # Forward
                 x = self.to_var(x)
                 y = self.to_var(y)
-                out = self.model(x)
+                out, _ = self.model(x)
 
                 # Backward
                 loss = reconst_loss(out, y)
@@ -297,7 +297,7 @@ class Solver(object):
             # forward
             x = self.to_var(x)
             y = torch.tensor([ground_truth.astype('float32') for i in range(self.batch_size)]).cuda()
-            out = self.model(x)
+            out, _ = self.model(x)
             loss = reconst_loss(out, y)
             losses.append(float(loss.data))
             out = out.detach().cpu()

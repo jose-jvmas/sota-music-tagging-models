@@ -92,8 +92,8 @@ class Predict(object):
 
     def get_dataset(self):
         if self.dataset == 'mtat':
-            self.test_list = np.load('./../split/mtat/test.npy')
-            self.binary = np.load('./../split/mtat/binary.npy')
+            self.test_list = np.load('./split/mtat/test.npy')
+            self.binary = np.load('./split/mtat/binary.npy')
         if self.dataset == 'msd':
             test_file = os.path.join('./../split/msd','filtered_list_test.cP')
             test_list = pickle.load(open(test_file,'rb'), encoding='bytes')
@@ -165,29 +165,32 @@ class Predict(object):
             elif self.dataset == 'jamendo':
                 fn = line
 
-            # load and split
-            x = self.get_tensor(fn)
+            try:
+                # load and split
+                x = self.get_tensor(fn)
 
-            # ground truth
-            if self.dataset == 'mtat':
-                ground_truth = self.binary[int(ix)]
-            elif self.dataset == 'msd':
-                ground_truth = self.id2tag[fn].flatten()
-            elif self.dataset == 'jamendo':
-                ground_truth = np.sum(self.mlb.transform(self.file_dict[fn]['tags']), axis=0)
+                # ground truth
+                if self.dataset == 'mtat':
+                    ground_truth = self.binary[int(ix)]
+                elif self.dataset == 'msd':
+                    ground_truth = self.id2tag[fn].flatten()
+                elif self.dataset == 'jamendo':
+                    ground_truth = np.sum(self.mlb.transform(self.file_dict[fn]['tags']), axis=0)
 
-            # forward
-            x = self.to_var(x)
-            y = torch.tensor([ground_truth.astype('float32') for i in range(self.batch_size)]).cuda()
-            out = self.model(x)
-            loss = reconst_loss(out, y)
-            losses.append(float(loss.data))
-            out = out.detach().cpu()
+                # forward
+                x = self.to_var(x)
+                y = torch.tensor([ground_truth.astype('float32') for i in range(self.batch_size)]).cuda()
+                out, _ = self.model(x)
+                loss = reconst_loss(out, y)
+                losses.append(float(loss.data))
+                out = out.detach().cpu()
 
-            # estimate
-            estimated = np.array(out).mean(axis=0)
-            est_array.append(estimated)
-            gt_array.append(ground_truth)
+                # estimate
+                estimated = np.array(out).mean(axis=0)
+                est_array.append(estimated)
+                gt_array.append(ground_truth)
+            except:
+                pass
 
         est_array, gt_array = np.array(est_array), np.array(gt_array)
         loss = np.mean(losses)

@@ -9,7 +9,7 @@ class AudioFolder(data.Dataset):
 		self.split = split
 		self.input_length = input_length
 		self.get_songlist()
-		self.binary = np.load('./../split/mtat/binary.npy')
+		self.binary = np.load('./split/mtat/binary.npy')
 
 	def __getitem__(self, index):
 		npy, tag_binary = self.get_npy(index)
@@ -17,11 +17,11 @@ class AudioFolder(data.Dataset):
 
 	def get_songlist(self):
 		if self.split == 'TRAIN':
-			self.fl = np.load('./../split/mtat/train.npy')
+			self.fl = np.load('./split/mtat/train.npy')
 		elif self.split == 'VALID':
-			self.fl = np.load('./../split/mtat/valid.npy')
+			self.fl = np.load('./split/mtat/valid.npy')
 		elif self.split == 'TEST':
-			self.fl = np.load('./../split/mtat/test.npy')
+			self.fl = np.load('./split/mtat/test.npy')
 		else:
 			print('Split should be one of [TRAIN, VALID, TEST]')
 
