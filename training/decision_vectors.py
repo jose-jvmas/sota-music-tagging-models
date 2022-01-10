@@ -92,6 +92,8 @@ class Predict(object):
 
     def get_dataset(self):
         if self.dataset == 'mtat':
+            self.train_list = np.load('./split/mtat/train.npy')
+            self.valid_list = np.load('./split/mtat/valid.npy')
             self.test_list = np.load('./split/mtat/test.npy')
             self.binary = np.load('./split/mtat/binary.npy')
         if self.dataset == 'msd':
@@ -180,7 +182,7 @@ class Predict(object):
 
                 # estimate
                 estimated = np.array(out).mean(axis=0)
-                self.save_embedding(estimated, ground_truth, self.dataset, config.model_type, config.partition)
+                self.save_vector(estimated, ground_truth, self.dataset, config.model_type, config.partition)
             except:
                 pass
 
@@ -188,7 +190,7 @@ class Predict(object):
 
 
     def save_vector(self, estimated, gt, corpus, model_name, partition):
-        base_path = 'embeddings'
+        base_path = 'decision'
 
         if not os.path.exists(base_path): os.makedirs(base_path)
         if not os.path.exists(os.path.join(base_path, corpus)): os.makedirs(os.path.join(base_path, corpus))
